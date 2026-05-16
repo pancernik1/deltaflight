@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "kgVDVluWiAg=",
+  "success": true,
+  "projectFilePath": "/home/armjaro/deltaflight/firmware-testbuild/src/DebugParser.csproj",
+  "expectedPackageFiles": [
+    "/home/armjaro/.nuget/packages/microsoft.net.illink.tasks/8.0.27/microsoft.net.illink.tasks.8.0.27.nupkg.sha512",
+    "/home/armjaro/.nuget/packages/microsoft.netcore.app.ref/8.0.27/microsoft.netcore.app.ref.8.0.27.nupkg.sha512",
+    "/home/armjaro/.nuget/packages/microsoft.netcore.app.runtime.linux-x64/8.0.27/microsoft.netcore.app.runtime.linux-x64.8.0.27.nupkg.sha512",
+    "/home/armjaro/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.27/microsoft.aspnetcore.app.ref.8.0.27.nupkg.sha512",
+    "/home/armjaro/.nuget/packages/microsoft.aspnetcore.app.runtime.linux-x64/8.0.27/microsoft.aspnetcore.app.runtime.linux-x64.8.0.27.nupkg.sha512",
+    "/home/armjaro/.nuget/packages/microsoft.netcore.app.host.linux-x64/8.0.27/microsoft.netcore.app.host.linux-x64.8.0.27.nupkg.sha512"
+  ],
+  "logs": []
+}

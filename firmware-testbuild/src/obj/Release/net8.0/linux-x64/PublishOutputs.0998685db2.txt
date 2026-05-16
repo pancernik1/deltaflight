@@ -1,0 +1,2 @@
+/home/armjaro/deltaflight/firmware-testbuild/parser-bin/DebugParser.pdb
+/home/armjaro/deltaflight/firmware-testbuild/parser-bin/DebugParser
