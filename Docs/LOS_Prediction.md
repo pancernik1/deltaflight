@@ -2,9 +2,7 @@
 In order to use the data from a Digital Elevation Model you need to turn the image into a 2D integer array. Than after transforming GPS coordinates of the source and reciever into indexes in the array you can use a [Line drawing algorithm](https://wikipedia.org/wiki/Line_drawing_algorithm) to find indexes of variables between them and turn them into a 1D array. From this moment there are two different ways to explain what happens - the math way and the code way.
 # The math way - graph
 This works by using the equation
-$$
-x = 1
-$$
+![equation](https://latex.codecogs.com/svg.image?\theta_{min}=\arctan\left(\max_{k=1}^{9}(L_{k+1}-L_{k})\right))
 Where L is the array , to calculate θ which is the minimal angle needed to keep LOS.
 To make this equation easier to understand i made a [Demo in Desmos](https://desmos.com/calculator/4zc3jdxvck).
 After that you just calculate the distance between source and reciever using the pythagorean theorem and that enables you to calculate the angle theta which  you can calculate with basic trigonometry from heigh and distance.
