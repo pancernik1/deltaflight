@@ -4,7 +4,7 @@
 As of right now the delta flight app is the only part of the project i'm actually working on.
 ## Feature list
 ### Using satelite data
-One of the app's main features is using satelite data from the copernicus project to not only provide offline satelite imagery but also height maps. For a guide check out the [Guide to Satelite Data](https://github.com)
+One of the app's main features is using satelite data from the copernicus project to not only provide offline satelite imagery but also height maps. For a guide check out the [Guide to Satelite Data](https://github.com/pancernik1/deltaflight/tree/main/Docs/Satelite_Data.md)
 ### LOS Prediciton
-Line Of Sight Prediction is a feature which allows the user to find the largest distance which keeps LOS between The transmitter and reciever , for technical details checkout the [LOS Prediction Documentation](https://github.com)
+Line Of Sight Prediction is a feature which allows the user to find the largest distance which keeps LOS between The transmitter and reciever , for technical details checkout the [LOS Prediction Documentation](https://github.com/pancernik1/deltaflight/tree/main/Docs/LOS_Prediction.md)
 
