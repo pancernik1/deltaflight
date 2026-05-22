@@ -3,7 +3,7 @@ In order to use the data from a Digital Elevation Model you need to turn the ima
 # The math way - graph
 This works by using the equation
 
-$$θ_{min} = arctan(max_{k=1}^{9}(L_{k+1} - L_k))$$
+$$ θ_{min} = arctan(max_{k=1}^{9}(L_{k+1} - L_k))$$
 
 Where L is the array , to calculate θ which is the minimal angle needed to keep LOS.
 To make this equation easier to understand i made a [Demo in Desmos](https://desmos.com/calculator/4zc3jdxvck).
