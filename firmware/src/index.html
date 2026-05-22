@@ -7,7 +7,8 @@
            font-src 'self' https://fonts.gstatic.com;
            script-src 'self' 'unsafe-inline';
            style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-           connect-src 'self' http://localhost:5050;">
+           connect-src 'self' http://localhost:5050;
+           img-src 'self' data: blob:;">>
 <title>ΔF</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600&family=Barlow+Condensed:wght@900&display=swap" rel="stylesheet">
@@ -277,8 +278,12 @@
       <main class="content">
 
         <section class="tab-panel active" id="tab-map">
-          <div class="panel-title">Map</div>
-          <div class="placeholder"><div class="placeholder-icon">◈</div>Map content goes here</div>
+           <div class="panel-title">Map</div>
+    <img id="map-img" style="max-width:100%; display:none; border-radius:4px;" />
+    <div id="map-placeholder" class="placeholder">
+      <div class="placeholder-icon">◈</div>
+      No map loaded — use convert command in Debug tab
+  </div>
         </section>
 
         <section class="tab-panel" id="tab-data">
@@ -344,7 +349,19 @@ async function fetchVersion() {
   }
 }
 fetchVersion();
-
+async function fetchMap() {
+  try {
+    const r = await fetch("http://localhost:5050/map");
+    if (!r.ok) return;
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    const img = document.getElementById("map-img");
+    img.src = url;
+    img.style.display = "block";
+    document.getElementById("map-placeholder").style.display = "none";
+  } catch {}
+}
+fetchMap();
   // ── Clock ──────────────────────────────────────────────────────────────
   function tick() { document.getElementById('clock').textContent = new Date().toTimeString().slice(0,8); }
   tick(); setInterval(tick, 1000);
@@ -411,6 +428,7 @@ fetchVersion();
       const o = data.output ?? "";
       if (o === "__CLEAR__") { out().innerHTML = ""; return; }
       printRes(o, false);
+      if (cmd.trim().toLowerCase().startsWith("convert")) fetchMap();
     } catch {
       spin.remove(); setStatus(false);
       printRes(`Connection failed — is DebugParser running on port 5050?`, true);

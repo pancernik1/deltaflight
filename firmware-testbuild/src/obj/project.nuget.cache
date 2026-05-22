@@ -1,15 +1,50 @@
 {
   "version": 2,
-  "dgSpecHash": "kgVDVluWiAg=",
+  "dgSpecHash": "IMH7eAXptVY=",
   "success": true,
   "projectFilePath": "/home/armjaro/deltaflight/firmware-testbuild/src/DebugParser.csproj",
   "expectedPackageFiles": [
+    "/home/armjaro/.nuget/packages/maxrev.gdal.core/3.9.1.240/maxrev.gdal.core.3.9.1.240.nupkg.sha512",
+    "/home/armjaro/.nuget/packages/maxrev.gdal.linuxruntime.minimal/3.9.1.240/maxrev.gdal.linuxruntime.minimal.3.9.1.240.nupkg.sha512",
+    "/home/armjaro/.nuget/packages/maxrev.gdal.linuxruntime.minimal.arm64/3.9.1.240/maxrev.gdal.linuxruntime.minimal.arm64.3.9.1.240.nupkg.sha512",
+    "/home/armjaro/.nuget/packages/maxrev.gdal.linuxruntime.minimal.x64/3.9.1.240/maxrev.gdal.linuxruntime.minimal.x64.3.9.1.240.nupkg.sha512",
     "/home/armjaro/.nuget/packages/microsoft.net.illink.tasks/8.0.27/microsoft.net.illink.tasks.8.0.27.nupkg.sha512",
+    "/home/armjaro/.nuget/packages/skiasharp/2.88.7/skiasharp.2.88.7.nupkg.sha512",
+    "/home/armjaro/.nuget/packages/skiasharp.nativeassets.linux/2.88.7/skiasharp.nativeassets.linux.2.88.7.nupkg.sha512",
+    "/home/armjaro/.nuget/packages/skiasharp.nativeassets.macos/2.88.7/skiasharp.nativeassets.macos.2.88.7.nupkg.sha512",
+    "/home/armjaro/.nuget/packages/skiasharp.nativeassets.win32/2.88.7/skiasharp.nativeassets.win32.2.88.7.nupkg.sha512",
     "/home/armjaro/.nuget/packages/microsoft.netcore.app.ref/8.0.27/microsoft.netcore.app.ref.8.0.27.nupkg.sha512",
     "/home/armjaro/.nuget/packages/microsoft.netcore.app.runtime.linux-x64/8.0.27/microsoft.netcore.app.runtime.linux-x64.8.0.27.nupkg.sha512",
     "/home/armjaro/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.27/microsoft.aspnetcore.app.ref.8.0.27.nupkg.sha512",
     "/home/armjaro/.nuget/packages/microsoft.aspnetcore.app.runtime.linux-x64/8.0.27/microsoft.aspnetcore.app.runtime.linux-x64.8.0.27.nupkg.sha512",
     "/home/armjaro/.nuget/packages/microsoft.netcore.app.host.linux-x64/8.0.27/microsoft.netcore.app.host.linux-x64.8.0.27.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "DebugParser depends on MaxRev.Gdal.Core (>= 3.9.0.420) but MaxRev.Gdal.Core 3.9.0.420 was not found. MaxRev.Gdal.Core 3.9.1.240 was resolved instead.",
+      "projectPath": "/home/armjaro/deltaflight/firmware-testbuild/src/DebugParser.csproj",
+      "warningLevel": 1,
+      "filePath": "/home/armjaro/deltaflight/firmware-testbuild/src/DebugParser.csproj",
+      "libraryId": "MaxRev.Gdal.Core",
+      "targetGraphs": [
+        "net8.0",
+        "net8.0/linux-x64"
+      ]
+    },
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "DebugParser depends on MaxRev.Gdal.LinuxRuntime.Minimal (>= 3.9.0.420) but MaxRev.Gdal.LinuxRuntime.Minimal 3.9.0.420 was not found. MaxRev.Gdal.LinuxRuntime.Minimal 3.9.1.240 was resolved instead.",
+      "projectPath": "/home/armjaro/deltaflight/firmware-testbuild/src/DebugParser.csproj",
+      "warningLevel": 1,
+      "filePath": "/home/armjaro/deltaflight/firmware-testbuild/src/DebugParser.csproj",
+      "libraryId": "MaxRev.Gdal.LinuxRuntime.Minimal",
+      "targetGraphs": [
+        "net8.0",
+        "net8.0/linux-x64"
+      ]
+    }
+  ]
 }

@@ -4,12 +4,18 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <AssemblyName>DebugParser</AssemblyName>
-    <RootNamespace>DebugParser</RootNamespace>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <RootNamespace>deltaflight</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <!-- Single-file publish defaults (overridable via CLI) -->
     <SelfContained>true</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MaxRev.Gdal.Core" Version="3.9.0.420" />
+    <PackageReference Include="MaxRev.Gdal.LinuxRuntime.Minimal" Version="3.9.0.420" />
+    <PackageReference Include="SkiaSharp" Version="2.88.7" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.7" />     <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.7" />
+  </ItemGroup>
 </Project>

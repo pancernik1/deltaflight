@@ -46,11 +46,27 @@
           "framework": "net8.0",
           "targetAlias": "net8.0",
           "dependencies": {
+            "MaxRev.Gdal.Core": {
+              "target": "Package",
+              "version": "[3.9.0.420, )"
+            },
+            "MaxRev.Gdal.LinuxRuntime.Minimal": {
+              "target": "Package",
+              "version": "[3.9.0.420, )"
+            },
             "Microsoft.NET.ILLink.Tasks": {
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.27, )",
               "autoReferenced": true
+            },
+            "SkiaSharp": {
+              "target": "Package",
+              "version": "[2.88.7, )"
+            },
+            "SkiaSharp.NativeAssets.Linux": {
+              "target": "Package",
+              "version": "[2.88.7, )"
             }
           },
           "imports": [

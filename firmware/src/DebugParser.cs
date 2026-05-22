@@ -39,7 +39,7 @@ class DebugParser
         // CORS headers so the browser page can reach us
         string origin = req.Headers["Origin"] ?? "*";
         res.Headers.Add("Access-Control-Allow-Origin", "*");
-        res.Headers.Add("Access-Control-Allow-Methods", "POST, OPTIONS");
+        res.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         res.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
 
         if (req.HttpMethod == "OPTIONS")        // preflight
@@ -48,7 +48,22 @@ class DebugParser
             res.Close();
             return;
         }
-
+    if (req.HttpMethod == "GET" && req.Url.AbsolutePath == "/map")
+    {
+    string mapPath = "conv.png";
+    if (!File.Exists(mapPath))
+    {
+        res.StatusCode = 404;
+        res.Close();
+        return;
+    }
+    byte[] imgBytes = File.ReadAllBytes(mapPath);
+        res.ContentType = "image/png";
+        res.ContentLength64 = imgBytes.Length;
+        res.OutputStream.Write(imgBytes, 0, imgBytes.Length);
+        res.Close();
+        return;
+    }
         if (req.HttpMethod != "POST" || req.Url.AbsolutePath != "/cmd")
         {
             res.StatusCode = 404;
@@ -99,15 +114,18 @@ class DebugParser
             "clear"              => "__CLEAR__",       // handled client-side
             var c when c.StartsWith("echo ")
                                  => cmd.Substring(5),
-            ""                   => "",
+            var conv when conv.StartsWith("convert ")  => map.path(cmd.Substring(8)),
+             ""                   => "",
             _                    => $"Unknown command: \"{cmd}\". Type 'help' for available commands."
+            
+            
         };
     }
 	static string DebugVersion()
 	 {
 		return $"version - {version}";
 	 }	
-
+    
 
 
 

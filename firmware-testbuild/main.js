@@ -135,3 +135,27 @@ app.on("window-all-closed", () => {
 });
 
 app.on("before-quit", stopParser);
+function startParser() {
+  const exe = parserExePath();
+  console.log("[main] Starting parser:", exe);
+
+  parserProc = spawn(exe, [], {
+    stdio: ["ignore", "pipe", "pipe"],
+    detached: false,
+  });
+
+  parserProc.stdout.on("data", (d) => process.stdout.write("[parser] " + d));
+  parserProc.stderr.on("data", (d) => process.stderr.write("[parser-err] " + d));
+
+  parserProc.on("error", (err) => {
+    console.warn("[main] Parser binary not found:", err.message);
+    startParserFallback();
+  });
+
+  parserProc.on("exit", (code, signal) => {
+    if (signal === "SIGTERM") return; // intentional kill, don't restart
+    console.log("[main] Parser crashed due to unexpected error, restarting in 1s...");
+    parserProc = null;
+    setTimeout(startParser, 1000);
+  });
+}
