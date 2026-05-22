@@ -12,9 +12,20 @@ This works by using the equation
 Where L is the array , to calculate θ which is the minimal angle needed to keep LOS.
 To make this equation easier to understand i made a [Demo in Desmos](https://desmos.com/calculator/4zc3jdxvck).
 After that you just calculate the distance between source and reciever using the pythagorean theorem and that enables you to calculate the angle theta which  you can calculate with basic trigonometry from heigh and distance.
-$$ θ = atan2(y,x)$$
+
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://latex.codecogs.com/svg.image?%5Ccolor%7Bwhite%7D%5Ctheta%3D%5Carctan%5Cleft(%5Cfrac%7By%7D%7Bx%7D%5Cright)">
+  <source media="(prefers-color-scheme: light)" srcset="https://latex.codecogs.com/svg.image?\theta=\arctan\left(\frac{y}{x}\right)">
+  <img alt="equation2">  
+</picture>
+
 Finally , you only have LOS if
-$$ θ > θ_{min}$$
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://latex.codecogs.com/svg.image?%5Ccolor%7Bwhite%7D%5Ctheta%3E%5Ctheta_%7Bmin%7D">
+  <source media="(prefers-color-scheme: light)" srcset="https://latex.codecogs.com/svg.image?\theta>\theta_{min}">
+  <img alt="equation3">
+</picture>
 
 # The code way
 _DISCLAIMER:THE CODE PRESENTED HERE IS SIMPLIFIED FOR THE SAKE OF READABILTY_
