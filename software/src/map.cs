@@ -14,9 +14,10 @@ public class map
     {
         string? argName = null;
         int? argVal = null;
-        string[] argList = new string[2];
+        string[] argList = new string[3];
         argList[0] = "offX";
         argList[1] = "offY";
+        argList[2] = "scale";
         string extrName = "";
         string extrVal = "";
         int? eqI =null; // '=' sign index
@@ -146,6 +147,7 @@ public class map
         string path = "";
         string ext = "";
         int dotIndex = 0;
+        int scale =1;
 
         for (int i = 0; i < input.Length; i++)
         {
@@ -172,6 +174,7 @@ public class map
         {   
             int offX =0;
             int offY =0;
+            
             List<string> args = getArgs(input,quoteIndexes[1]);
             List<string?> argNames = new List<string?>();
             List<int?> argVals = new List<int?>();
@@ -188,10 +191,18 @@ public class map
                  {
                     offY = parseArg(args[i]).argVal ?? 0;
                  }
+                 if(parseArg(args[i]).argName == "scale")
+                 {
+                    if(parseArg(args[i]).argVal != 0)
+                    {
+                    scale = parseArg(args[i]).argVal ?? 1;
+                    }
+                 }
+                 
                 }
 
             }
-            jp2ds(path,offX,offY,4);
+            jp2ds(path,offX,offY,scale);
             
         }
         else
@@ -203,7 +214,7 @@ public class map
         {
             return err.ToString();
         }
-        return "succes";
+        return scale.ToString();
     }
 static public void jp2ds(string _path, int offX, int offY, int scale)
 {
@@ -215,8 +226,8 @@ static public void jp2ds(string _path, int offX, int offY, int scale)
     int fullWidth  = ds.RasterXSize;
     int fullHeight = ds.RasterYSize;
 
-    int outWidth   = 600;
-    int outHeight  = 400;
+    int outWidth   = 600 * scale;
+    int outHeight  = 400 * scale;
     int pixelCount = outWidth * outHeight;
 
     int srcOffX = Math.Clamp(offX, 0, fullWidth  - 1);
@@ -233,15 +244,15 @@ static public void jp2ds(string _path, int offX, int offY, int scale)
     byte[] bufG = new byte[pixelCount];
     byte[] bufB = new byte[pixelCount];
 
-    bandR.ReadRaster(srcOffX, srcOffY, srcRegionW / scale, srcRegionH / scale, bufR, outWidth, outHeight, 0, 0);
-    bandG.ReadRaster(srcOffX, srcOffY, srcRegionW / scale, srcRegionH / scale, bufG, outWidth, outHeight, 0, 0);
-    bandB.ReadRaster(srcOffX, srcOffY, srcRegionW / scale, srcRegionH / scale, bufB, outWidth, outHeight, 0, 0);
+    bandR.ReadRaster(srcOffX, srcOffY, srcRegionW , srcRegionH , bufR, outWidth, outHeight, 0, 0);
+    bandG.ReadRaster(srcOffX, srcOffY, srcRegionW , srcRegionH , bufG, outWidth, outHeight, 0, 0);
+    bandB.ReadRaster(srcOffX, srcOffY, srcRegionW , srcRegionH , bufB, outWidth, outHeight, 0, 0);
 
-    var bmp = new SKBitmap(outWidth, outHeight, SKColorType.Rgb888x, SKAlphaType.Opaque);
-    for (int y = 0; y < outHeight; y++)
-        for (int x = 0; x < outWidth; x++)
+    var bmp = new SKBitmap(outWidth / scale, outHeight /scale, SKColorType.Rgb888x, SKAlphaType.Opaque);
+    for (int y = 0; y < outHeight; Math.Min(y += scale,outHeight))
+        for (int x = 0; x < outWidth; Math.Min(x += scale,outWidth))
         {
-            int i = y * outWidth + x;
+            int i = y * (outWidth/scale) + x;
             bmp.SetPixel(x, y, new SKColor(bufR[i], bufG[i], bufB[i]));
         }
 
