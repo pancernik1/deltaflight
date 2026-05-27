@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using SkiaSharp;
 using MaxRev.Gdal.Core;
 using OSGeo.GDAL;
@@ -10,6 +11,34 @@ public class map
     public int offx = 0;
     public int offy = 0;
 
+    public static (string path, string ext , List<int> quoteIndexes) file(string input,bool savePath)
+    {
+        List<int> quoteIndexes = new List<int>();
+        string path  = "";
+        string ext   = "";
+        int dotIndex = 0;
+        
+
+        for (int i = 0; i < input.Length; i++)
+        {
+            if (input[i] == '"') quoteIndexes.Add(i);
+            if (input[i] == '.') dotIndex = i;
+        }
+
+        for (int i = 0; quoteIndexes.Count >= 2 && i < input.Length; i++)
+        {
+            if (quoteIndexes[0] < i && i < quoteIndexes[1])
+            {
+                path += input[i];
+                if (i > dotIndex) ext += input[i];
+            }
+        }
+        if(savePath)
+        {
+            File.WriteAllText("MapPath.json",path)
+        }
+        return (path,ext,quoteIndexes);
+    }
     static public (string? argName, int? argVal) parseArg(string arg)
     {
         string? argName = null;
@@ -99,56 +128,75 @@ public class map
         return null;
     }
 
-    public static string path(string input)
+    public static string convert(string input)
     {
-        List<int> quoteIndexes = new List<int>();
-        string path  = "";
-        string ext   = "";
-        int dotIndex = 0;
-        int scale    = 1;
-
-        for (int i = 0; i < input.Length; i++)
-        {
-            if (input[i] == '"') quoteIndexes.Add(i);
-            if (input[i] == '.') dotIndex = i;
-        }
-
-        for (int i = 0; quoteIndexes.Count >= 2 && i < input.Length; i++)
-        {
-            if (quoteIndexes[0] < i && i < quoteIndexes[1])
-            {
-                path += input[i];
-                if (i > dotIndex) ext += input[i];
-            }
-        }
-
+        int scale = 1;
+        bool readFile = false;
         try
         {
-            if (checkForExceptions(quoteIndexes, path, ext, input) == null)
+            if(!readFile)
             {
-                int offX = 0;
-                int offY = 0;
-
-                List<string> args = getArgs(input, quoteIndexes[1]);
-
-                if (args.Count > 0)
+                if (checkForExceptions(file(input,false).quoteIndexes, file(input,false).path, file(input,false).ext, input) == null)
                 {
-                    for (int i = 0; i < args.Count; i++)
+                    int offX = 0;
+                    int offY = 0;
+                    
+                    List<string> args = getArgs(input, file(input,false).quoteIndexes[1]);
+
+                    if (args.Count > 0)
                     {
-                        if (parseArg(args[i]).argName == "offX")
-                            offX = parseArg(args[i]).argVal ?? 0;
-                        if (parseArg(args[i]).argName == "offY")
-                            offY = parseArg(args[i]).argVal ?? 0;
-                        if (parseArg(args[i]).argName == "scale" && parseArg(args[i]).argVal != 0)
-                            scale = parseArg(args[i]).argVal ?? 1;
+                        for (int i = 0; i < args.Count; i++)
+                        {
+                            if (parseArg(args[i]).argName == "offX")
+                                offX = parseArg(args[i]).argVal ?? 0;
+                            if (parseArg(args[i]).argName == "offY")
+                                offY = parseArg(args[i]).argVal ?? 0;
+                            if (parseArg(args[i]).argName == "scale" && parseArg(args[i]).argVal != 0)
+                                scale = parseArg(args[i]).argVal ?? 1;
+                        }
+                    }
+                    if(!readFile)
+                    {
+                        jp2ds(file(input,false).path, offX, offY, scale);
+                    }
+                    else
+                    {
+                        jp2ds(File.WriteAllText("MapPath.json"), offX, offY, scale);
+                        
                     }
                 }
-
-                jp2ds(path, offX, offY, scale);
+                else
+                {
+                    return "Path error- " + checkForExceptions(quoteIndexes, path, ext, input);
+                }
             }
             else
             {
-                return "Path error- " + checkForExceptions(quoteIndexes, path, ext, input);
+                if (checkForExceptions(file(File.ReadAllText("MapPath.json"),false).quoteIndexes, file(File.ReadAllText("MapPath.json"),false).path, file(File.ReadAllText("MapPath.json"),false).ext, File.ReadAllText("MapPath.json")) == null)
+                    {
+                        int offX = 0;
+                        int offY = 0;
+                        
+                        List<string> args = getArgs(input, file(File.ReadAllText("MapPath.json"),false).quoteIndexes[1]);
+
+                        if (args.Count > 0)
+                        {
+                            for (int i = 0; i < args.Count; i++)
+                            {
+                                if (parseArg(args[i]).argName == "offX")
+                                    offX = parseArg(args[i]).argVal ?? 0;
+                                if (parseArg(args[i]).argName == "offY")
+                                    offY = parseArg(args[i]).argVal ?? 0;
+                                if (parseArg(args[i]).argName == "scale" && parseArg(args[i]).argVal != 0)
+                                    scale = parseArg(args[i]).argVal ?? 1;
+                            }
+                        }
+                            jp2ds(File.ReadAllText("MapPath.json"), offX, offY, scale);
+                    }
+                else
+                {
+                    return "Path error- " + checkForExceptions(quoteIndexes, path, ext, input);
+                }
             }
         }
         catch (System.Exception err)
@@ -184,6 +232,8 @@ public class map
     Band bandG = ds.GetRasterBand(2);
     Band bandB = ds.GetRasterBand(3);
 
+    double[] gt = new double[6];
+    ds.GetGeoTransform(gt);
     byte[] bufR = new byte[pixelCount];
     byte[] bufG = new byte[pixelCount];
     byte[] bufB = new byte[pixelCount];
@@ -191,6 +241,7 @@ public class map
     bandR.ReadRaster(srcOffX, srcOffY, srcRegionW, srcRegionH, bufR, outWidth, outHeight, 0, 0);
     bandG.ReadRaster(srcOffX, srcOffY, srcRegionW, srcRegionH, bufG, outWidth, outHeight, 0, 0);
     bandB.ReadRaster(srcOffX, srcOffY, srcRegionW, srcRegionH, bufB, outWidth, outHeight, 0, 0);
+
 
     var bmp = new SKBitmap(outWidth, outHeight, SKColorType.Rgb888x, SKAlphaType.Opaque);
     for (int y = 0; y < outHeight; y++)
@@ -207,7 +258,7 @@ public class map
     encoded.SaveTo(stream);
 
     ds.Dispose();
-    //Debug
+    //Debug scaling + offset
     Console.WriteLine("Image created");
     Console.WriteLine("srcOffX - " + srcOffX.ToString());
     Console.WriteLine("srcOffY - " + srcOffY.ToString());
@@ -217,5 +268,11 @@ public class map
     Console.WriteLine("srcRegionH - " + srcRegionH.ToString());
     Console.WriteLine("fullWidth - " + fullWidth.ToString());
     Console.WriteLine("fullHeight - " + fullHeight.ToString());
+    //Debug geotransform
+    Console.WriteLine("gt vars - ");
+    for(int i = 0; i < 6;i++)
+    {
+        Console.WriteLine("v" + (i+1).ToString() + ' '+ gt[i].ToString());
+    }
 }
 }
