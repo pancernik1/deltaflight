@@ -35,7 +35,7 @@ public class map
         }
         if(savePath)
         {
-            File.WriteAllText("MapPath.json",path)
+            File.WriteAllText("MapPath.json",path);
         }
         return (path,ext,quoteIndexes);
     }
@@ -43,10 +43,11 @@ public class map
     {
         string? argName = null;
         int? argVal = null;
-        string[] argList = new string[3];
+        string[] argList = new string[4];
         argList[0] = "offX";
         argList[1] = "offY";
         argList[2] = "scale";
+        argList[3] = "path";
         string extrName = "";
         string extrVal = "";
         int? eqI = null;
@@ -103,29 +104,37 @@ public class map
 
     public static string checkForExceptions(List<int> arr, string _path, string ext, string cmd)
     {
-        if (arr.Count % 2 != 0)      return "Quotes aren't closed";
-        if (arr.Count < 2)           return "Add path to the image you want to convert";
-        if (arr.Count > 2)           return "Multiple paths not supported";
-        if (arr[1] - arr[0] < 2)     return "No path found";
-        if (!File.Exists(_path))     return "File doesn't exist";
-        if (ext != "jp2")            return "Wrong extension";
-
-        List<string>  args     = getArgs(cmd, arr[1]);
+        List<string>  args     = getArgs(cmd,0);
         List<string?> argNames = new List<string?>();
         List<int?>    argVals  = new List<int?>();
-
+        bool readFile = false;
         if (args.Count > 0)
         {
             for (int i = 0; i < args.Count; i++)
             {
                 argNames.Add(parseArg(args[i]).argName);
                 argVals.Add(parseArg(args[i]).argVal);
+                if(argNames[i] == "path")
+                    readFile = true;
             }
             if (argNames.Contains(null)) return "unknown argument found";
             if (argVals.Contains(null))  return "Couldn't parse argument value (it has to be int)";
         }
-
-        return null;
+        if(!readFile)
+        {
+            if (arr.Count % 2 != 0)      return "Quotes aren't closed";
+            if (arr.Count < 2)           return "Add path to the image you want to convert";
+            if (arr.Count > 2)           return "Multiple paths not supported";
+            if (arr[1] - arr[0] < 2)     return "No path found";
+            if (!File.Exists(_path))     return "File doesn't exist";
+            if (ext != "jp2")            return "Wrong extension";
+            else                         return null;
+        }
+        else
+        {
+            return "sf";
+        }
+        
     }
 
     public static string convert(string input)
@@ -134,6 +143,10 @@ public class map
         bool readFile = false;
         try
         {
+            if(checkForExceptions(file(input,false).quoteIndexes, file(input,false).path, file(input,false).ext, input) == "sf")
+            {
+                readFile = true;
+            }
             if(!readFile)
             {
                 if (checkForExceptions(file(input,false).quoteIndexes, file(input,false).path, file(input,false).ext, input) == null)
@@ -155,29 +168,23 @@ public class map
                                 scale = parseArg(args[i]).argVal ?? 1;
                         }
                     }
-                    if(!readFile)
-                    {
-                        jp2ds(file(input,false).path, offX, offY, scale);
-                    }
-                    else
-                    {
-                        jp2ds(File.WriteAllText("MapPath.json"), offX, offY, scale);
-                        
-                    }
+                    
+                        jp2ds(file(input,false).path, offX, offY, scale);                
+                    
                 }
                 else
                 {
-                    return "Path error- " + checkForExceptions(quoteIndexes, path, ext, input);
+                    return "Path error- " + checkForExceptions(file(input,false).quoteIndexes, file(input,false).path, file(input,false).ext, input);
                 }
             }
             else
             {
-                if (checkForExceptions(file(File.ReadAllText("MapPath.json"),false).quoteIndexes, file(File.ReadAllText("MapPath.json"),false).path, file(File.ReadAllText("MapPath.json"),false).ext, File.ReadAllText("MapPath.json")) == null)
+                if (checkForExceptions(file(File.ReadAllText("MapPath.json"),false).quoteIndexes, file(File.ReadAllText("MapPath.json"),false).path, file(File.ReadAllText("MapPath.json"),false).ext, input) == "sf")
                     {
                         int offX = 0;
                         int offY = 0;
                         
-                        List<string> args = getArgs(input, file(File.ReadAllText("MapPath.json"),false).quoteIndexes[1]);
+                        List<string> args = getArgs(input, 0);
 
                         if (args.Count > 0)
                         {
@@ -195,7 +202,7 @@ public class map
                     }
                 else
                 {
-                    return "Path error- " + checkForExceptions(quoteIndexes, path, ext, input);
+                    return "Path error- " + checkForExceptions(file(File.ReadAllText("MapPath.json"),false).quoteIndexes, file(File.ReadAllText("MapPath.json"),false).path, file(File.ReadAllText("MapPath.json"),false).ext, input);
                 }
             }
         }
@@ -203,7 +210,7 @@ public class map
         {
             return err.ToString();
         }
-
+        
         return "conversion successful, scale=" + scale;
     }
 

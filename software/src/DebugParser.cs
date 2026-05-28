@@ -112,9 +112,10 @@ class DebugParser
             "ping"               => "Pong.",
             "time"               => $"Server time: {DateTime.Now:yyyy-MM-dd HH:mm:ss}",
             "clear"              => "__CLEAR__",       // handled client-side
-            var c when c.StartsWith("echo ")
+            var ec when ec.StartsWith("echo ")
                                  => cmd.Substring(5),
-            var conv when conv.StartsWith("convert ")  => map.path(cmd.Substring(8)),
+            var sp when sp.StartsWith("savepath ")  => map.file(cmd.Substring(9),true).path,
+            var conv when conv.StartsWith("convert ")  => map.convert(cmd.Substring(8)),
              ""                   => "",
             _                    => $"Unknown command: \"{cmd}\". Type 'help' for available commands."
             
