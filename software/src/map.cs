@@ -111,12 +111,17 @@ public class map
         if (args.Count > 0)
         {
             for (int i = 0; i < args.Count; i++)
-            {
-                argNames.Add(parseArg(args[i]).argName);
-                argVals.Add(parseArg(args[i]).argVal);
-                if(argNames[i] == "path")
-                    readFile = true;
-            }
+                {
+                    if (args[i] == "path") // no value, just a flag
+                    {
+                        argNames.Add("path");
+                        argVals.Add(0); // dummy value
+                        readFile = true;
+                        continue;
+                    }
+                    argNames.Add(parseArg(args[i]).argName);
+                    argVals.Add(parseArg(args[i]).argVal);
+                }
             if (argNames.Contains(null)) return "unknown argument found";
             if (argVals.Contains(null))  return "Couldn't parse argument value (it has to be int)";
         }
@@ -249,14 +254,84 @@ public class map
     bandG.ReadRaster(srcOffX, srcOffY, srcRegionW, srcRegionH, bufG, outWidth, outHeight, 0, 0);
     bandB.ReadRaster(srcOffX, srcOffY, srcRegionW, srcRegionH, bufB, outWidth, outHeight, 0, 0);
 
+    (int,int) targetCords = (100,100);
+    (int,int) srcCords = (0,0);
+    (int,int) closestCords = (0,0);
 
     var bmp = new SKBitmap(outWidth, outHeight, SKColorType.Rgb888x, SKAlphaType.Opaque);
     for (int y = 0; y < outHeight; y++)
         for (int x = 0; x < outWidth; x++)
         {
-            int i = y * outWidth + x;
             
+            
+            
+            int i = y * outWidth + x;
+            int xTot = x*scale + srcOffX;
+            int yTot = y*scale + srcOffY;
+            Console.WriteLine(xTot.ToString() + ' ' + yTot.ToString());
+            if((Math.Abs(targetCords.Item1 - closestCords.Item1) + Math.Abs(targetCords.Item2 - closestCords.Item2)>Math.Abs(targetCords.Item1 - xTot) + Math.Abs(targetCords.Item2 - yTot)))
+            {
+                closestCords = (xTot,yTot);
+                srcCords = (x,y);
+            }           
             bmp.SetPixel(x, y, new SKColor(bufR[i], bufG[i], bufB[i]));
+        }
+    /*Draw circle like this
+    ..#..
+    .###.
+    ##0##
+    .###.
+    ..#..
+    where o is srcCords
+    */
+        bmp.SetPixel(srcCords.Item1, srcCords.Item2, new SKColor(255, 0, 0));
+        if(srcCords.Item1 - 1>0 && srcCords.Item2-1>0)
+        {
+            bmp.SetPixel(srcCords.Item1 -1, srcCords.Item2-1, new SKColor(255, 0, 0));
+        }
+        if(srcCords.Item1 - 1>0)
+        {
+            bmp.SetPixel(srcCords.Item1 -1, srcCords.Item2, new SKColor(255, 0, 0));
+        }
+        if(srcCords.Item1 - 2>0)
+        {
+            bmp.SetPixel(srcCords.Item1 -2, srcCords.Item2, new SKColor(255, 0, 0));
+        }
+        if(srcCords.Item2 - 1>0)
+        {
+            bmp.SetPixel(srcCords.Item1, srcCords.Item2 -1, new SKColor(255, 0, 0));
+        }
+        if(srcCords.Item2 - 2>0)
+        {
+            bmp.SetPixel(srcCords.Item1, srcCords.Item2 -2, new SKColor(255, 0, 0));
+        }
+        if(srcCords.Item1 + 1<outWidth)
+        {
+            bmp.SetPixel(srcCords.Item1 +1, srcCords.Item2, new SKColor(255, 0, 0));
+        }
+        if(srcCords.Item2 + 1<outHeight)
+        {
+            bmp.SetPixel(srcCords.Item1, srcCords.Item2 + 1, new SKColor(255, 0, 0));
+        }
+        if(srcCords.Item1 + 2<outWidth)
+        {
+            bmp.SetPixel(srcCords.Item1 +2, srcCords.Item2, new SKColor(255, 0, 0));
+        }
+        if(srcCords.Item2 + 2<outHeight)
+        {
+            bmp.SetPixel(srcCords.Item1, srcCords.Item2 + 2, new SKColor(255, 0, 0));
+        }
+        if(srcCords.Item1 - 1>0 && srcCords.Item2+1<outHeight)
+        {
+            bmp.SetPixel(srcCords.Item1 -1, srcCords.Item2+1, new SKColor(255, 0, 0));
+        }
+        if(srcCords.Item1 + 1<outWidth && srcCords.Item2-1>0)
+        {
+            bmp.SetPixel(srcCords.Item1 +1, srcCords.Item2-1, new SKColor(255, 0, 0));
+        }
+        if(srcCords.Item1 + 1 < outWidth && srcCords.Item2 +1 < outHeight)
+        {
+            bmp.SetPixel(srcCords.Item1 +1, srcCords.Item2+1, new SKColor(255, 0, 0));
         }
 
     using var image   = SKImage.FromBitmap(bmp);
@@ -275,6 +350,7 @@ public class map
     Console.WriteLine("srcRegionH - " + srcRegionH.ToString());
     Console.WriteLine("fullWidth - " + fullWidth.ToString());
     Console.WriteLine("fullHeight - " + fullHeight.ToString());
+    Console.WriteLine(srcCords.Item1.ToString() + ' ' + srcCords.Item2.ToString());
     //Debug geotransform
     Console.WriteLine("gt vars - ");
     for(int i = 0; i < 6;i++)
