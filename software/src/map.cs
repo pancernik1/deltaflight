@@ -5,6 +5,7 @@ using System.Text.Json;
 using SkiaSharp;
 using MaxRev.Gdal.Core;
 using OSGeo.GDAL;
+using OSGeo.OSR;
 
 public class map
 {
@@ -339,7 +340,7 @@ public class map
     using var stream  = File.OpenWrite("conv.png");
     encoded.SaveTo(stream);
 
-    ds.Dispose();
+    
     //Debug scaling + offset
     Console.WriteLine("Image created");
     Console.WriteLine("srcOffX - " + srcOffX.ToString());
@@ -352,10 +353,30 @@ public class map
     Console.WriteLine("fullHeight - " + fullHeight.ToString());
     Console.WriteLine(srcCords.Item1.ToString() + ' ' + srcCords.Item2.ToString());
     //Debug geotransform
-    Console.WriteLine("gt vars - ");
-    for(int i = 0; i < 6;i++)
-    {
-        Console.WriteLine("v" + (i+1).ToString() + ' '+ gt[i].ToString());
-    }
+    Console.WriteLine($"gt[0]={gt[0]} gt[1]={gt[1]} gt[2]={gt[2]}");
+    Console.WriteLine($"gt[3]={gt[3]} gt[4]={gt[4]} gt[5]={gt[5]}");
+    Console.WriteLine(ds.GetProjection());
+    Console.WriteLine("lon  -  " + UtmToWgs84(gt[0],gt[3]).lon);
+    Console.WriteLine("lat  -  " + UtmToWgs84(gt[0],gt[3]).lat);
+    ds.Dispose();
 }
+    static public (double lon, double lat) UtmToWgs84(double easting, double northing)
+    {
+        SpatialReference utm = new SpatialReference("");
+        utm.ImportFromEPSG(32634);
+        utm.SetAxisMappingStrategy(AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
+ 
+        SpatialReference wgs84 = new SpatialReference("");
+        wgs84.ImportFromEPSG(4326);
+        wgs84.SetAxisMappingStrategy(AxisMappingStrategy.OAMS_TRADITIONAL_GIS_ORDER);
+ 
+        CoordinateTransformation ct = new CoordinateTransformation(utm, wgs84);
+ 
+        double[] point = new double[] { easting, northing, 0 };
+        ct.TransformPoint(point);
+ 
+        return (point[0], point[1]);
+    }
+
+ 
 }
