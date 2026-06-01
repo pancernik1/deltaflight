@@ -29,6 +29,7 @@ Finally , you only have LOS if
 
 # The code way
 _DISCLAIMER:THE CODE PRESENTED HERE IS SIMPLIFIED FOR THE SAKE OF READABILTY_
+
 Coding it is actually
 way easier since it's a singular for loop
 ```c#
